@@ -1,0 +1,18 @@
+{
+  "name": "power-observer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "prettier": "^3.8.1",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
