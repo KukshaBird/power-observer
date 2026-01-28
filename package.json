@@ -7,6 +7,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
     "express": "^5.2.1",
     "redis": "^5.10.0"
   },
