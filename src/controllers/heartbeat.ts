@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import BotManager from '../managers/BotManager';
 
 export const postHeartbeat = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
   try {
     const botManager = new BotManager();
     await botManager.handleHeartbeat();
