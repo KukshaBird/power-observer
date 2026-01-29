@@ -7,7 +7,7 @@ class TelegramClient implements BotMessengerClient {
   ) {}
 
   async sendMessage(text: string) {
-    const url = `https://api.telegram.org/bot${this.token}/sendMessage`;
+    const url = `https://api.telegram.org/bot${this.token}/sendMessage?chat_id=${this.chatId}`;
     await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

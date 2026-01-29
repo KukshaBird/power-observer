@@ -25,10 +25,11 @@ class Bot {
   }
 
   private getMessengerClient(): BotMessengerClient {
-    if (!this.messengerClient) {
+    const thisBot = Bot.getInstance();
+    if (!thisBot.messengerClient) {
       throw new Error('Messenger client is not initialized');
     }
-    return this.messengerClient;
+    return thisBot.messengerClient;
   }
 }
 
