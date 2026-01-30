@@ -4,6 +4,8 @@ class Bot {
   private static instance: Bot;
   private messengerClient: BotMessengerClient | null = null;
 
+  private constructor() {}
+
   public static getInstance(): Bot {
     if (!Bot.instance) {
       console.log('Creating new Bot instance');
@@ -20,16 +22,14 @@ class Bot {
 
   public async sendMessage(message: string) {
     const messenger = this.getMessengerClient();
-    console.log(message);
     await messenger.sendMessage(message);
   }
 
   private getMessengerClient(): BotMessengerClient {
-    const thisBot = Bot.getInstance();
-    if (!thisBot.messengerClient) {
+    if (!Bot.instance.messengerClient) {
       throw new Error('Messenger client is not initialized');
     }
-    return thisBot.messengerClient;
+    return Bot.instance.messengerClient;
   }
 }
 
