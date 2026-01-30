@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run"
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.5.1",
@@ -15,9 +16,11 @@
   "devDependencies": {
     "@types/cron": "^2.0.1",
     "@types/express": "^5.0.6",
+    "@types/node": "^25.1.0",
     "@types/redis": "^4.0.10",
     "prettier": "^3.8.1",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^4.0.18"
   },
   "private": true
 }
