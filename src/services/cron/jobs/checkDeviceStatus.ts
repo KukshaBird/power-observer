@@ -1,5 +1,5 @@
-import { CronJob } from '../types';
 import Redis from '../../redis/Redis';
+import { CronJob } from '../types';
 import { DateTimeLib } from '../../time/types';
 import TemporalTimeService from '../../time/TemporalTimeService';
 import MessageGenerator from '../../bot/generator/MessageGenerator';
@@ -15,7 +15,7 @@ class CheckDeviceStatusJob implements CronJob {
 
   constructor() {
     this.bank = new Redis();
-    this.bot = new Bot();
+    this.bot = Bot.getInstance();
     this.timeService = new TemporalTimeService();
   }
 
