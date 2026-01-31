@@ -3,4 +3,14 @@ export interface DateTimeLib {
   now(): string;
 
   diffMoreThenLimit(time1: string, time2: string, limit: number): boolean;
+
+  subtract(time1: string, time2: string): DurationObject;
+
+  formatTime(time: string): string;
 }
+
+export type DurationObject = {
+  days?: number;
+  hours?: number;
+  minutes?: number;
+};
