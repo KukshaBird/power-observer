@@ -2,10 +2,12 @@ import { CronJob } from '../types';
 import Redis from '../../redis/Redis';
 import { DateTimeLib } from '../../time/types';
 import TemporalTimeService from '../../time/TemporalTimeService';
+import MessageGenerator from '../../bot/generator/MessageGenerator';
 import Bot from '../../bot/Bot';
 
 class CheckDeviceStatusJob implements CronJob {
   private static HEARTBEAT_LIMIT = 60000; // 1 minute
+  private messageGenerator = new MessageGenerator();
 
   private bank: Redis;
   private bot: Bot;
@@ -30,14 +32,27 @@ class CheckDeviceStatusJob implements CronJob {
 
     const limitReached = this.limitReached(lastHeartbeat);
     if (limitReached && isConnected) {
+      const message = this.messageGenerator.disconnectMessage(
+        this.timeService.formatTime(lastHeartbeat),
+        this.timeService.formatTime(this.timeService.now()),
+      );
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.DISCONNECTED);
-      await this.bot.sendMessage('The device is disconnected now!');
+      await this.bot.sendMessage(message);
       return;
     }
 
     if (!limitReached && !isConnected) {
+      const diffDuration = this.timeService.subtract(this.timeService.now(), lastHeartbeat);
+      const blackoutTimeStr = this.messageGenerator.blackoutString(diffDuration);
+
+      const message = this.messageGenerator.connectMessage(
+        this.timeService.formatTime(lastHeartbeat),
+        this.timeService.formatTime(this.timeService.now()),
+        blackoutTimeStr,
+      );
+
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.CONNECTED);
-      await this.bot.sendMessage('The device is connected now!');
+      await this.bot.sendMessage(message);
     } else {
       console.log('Stable state. Skipping');
     }
