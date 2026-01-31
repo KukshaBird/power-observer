@@ -4,6 +4,7 @@ import { DeviceStatus } from './types';
 class Redis {
   public static HEARTBEAT_KEY = 'lastHeartbeat:';
   public static DEVICE_STATUS_KEY = 'status:';
+  public static DISCONNECTED_AT_KEY = 'disconnectedAt:';
   public static DEVICE_STATUSES: { [key: string]: DeviceStatus } = {
     CONNECTED: 'connected',
     DISCONNECTED: 'disconnected',
@@ -29,6 +30,10 @@ class Redis {
 
   public async getKey(key: string) {
     return await this.client.get(key);
+  }
+
+  public async removeKey(key: string) {
+    await this.client.del(key);
   }
 }
 

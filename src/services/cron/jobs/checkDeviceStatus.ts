@@ -31,27 +31,32 @@ class CheckDeviceStatusJob implements CronJob {
     }
 
     const limitReached = this.limitReached(lastHeartbeat);
+
+    // DISCONNECTED
     if (limitReached && isConnected) {
-      const message = this.messageGenerator.disconnectMessage(
-        this.timeService.formatTime(lastHeartbeat),
-        this.timeService.formatTime(this.timeService.now()),
-      );
+      const message = this.messageGenerator.disconnectMessage(this.timeService.formatTime(this.timeService.now()));
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.DISCONNECTED);
+      await this.bank.storeKey(Redis.DISCONNECTED_AT_KEY, lastHeartbeat);
       await this.bot.sendMessage(message);
       return;
     }
 
+    // CONNECTED
     if (!limitReached && !isConnected) {
-      const diffDuration = this.timeService.subtract(this.timeService.now(), lastHeartbeat);
-      const blackoutTimeStr = this.messageGenerator.blackoutString(diffDuration);
+      const disconnectedAt = await this.bank.getKey(Redis.DISCONNECTED_AT_KEY);
+      let blackoutTimeStr: string | undefined;
+      if (disconnectedAt) {
+        const diffDuration = this.timeService.subtract(this.timeService.now(), disconnectedAt);
+        blackoutTimeStr = this.messageGenerator.blackoutString(diffDuration);
+      }
 
       const message = this.messageGenerator.connectMessage(
-        this.timeService.formatTime(lastHeartbeat),
         this.timeService.formatTime(this.timeService.now()),
         blackoutTimeStr,
       );
 
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.CONNECTED);
+      await this.bank.removeKey(Redis.DISCONNECTED_AT_KEY);
       await this.bot.sendMessage(message);
     } else {
       console.log('Stable state. Skipping');

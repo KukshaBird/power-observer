@@ -4,20 +4,18 @@
 import { DurationObject } from '../../time/types';
 
 class MessageGenerator {
-  public connectMessage(lastHeartbeatTime: string, connectedTime: string, blackoutTime?: string): string {
+  public connectMessage(connectedTime: string, blackoutTime?: string): string {
     return `
       Світло ПОВЕРНУЛОСЬ
       Час: ${connectedTime}
-      Останній раз фіксувалос: ${lastHeartbeatTime}
       ${blackoutTime ? `Світла не було: ${blackoutTime}` : ''}
     `;
   }
 
-  public disconnectMessage(lastHeartbeatTime: string, disconnectedTime: string): string {
+  public disconnectMessage(disconnectedTime: string): string {
     return `
-      Світло ВИКЛЮЧЕНО
+      Світло ВІДСУТНЄ
       Час: ${disconnectedTime}
-      Останній раз фіксувалос: ${lastHeartbeatTime}
     `;
   }
 
