@@ -32,6 +32,7 @@ class TemporalTimeService implements DateTimeLib {
       hour: 'numeric',
       minute: 'numeric',
       second: 'numeric',
+      timeZone: DEFAULT_TIME_ZONE,
     });
   }
 }

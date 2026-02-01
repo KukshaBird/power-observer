@@ -52,12 +52,16 @@ describe('TemporalTimeService', () => {
   });
 
   describe('formatTime', () => {
-    it('should format ISO string to local time string', () => {
+    it('should format ISO string to local time string with specified timezone', () => {
+      // 19:00:00 UTC should be 21:00:00 in Europe/Kyiv (EET, UTC+2) in January
       const time = '2026-01-31T19:00:00Z';
       const formatted = service.formatTime(time);
-      // The exact format might depend on the environment,
-      // but it should at least contain hours and minutes.
-      expect(formatted).toMatch(/\d{1,2}:\d{2}:\d{2}/);
+
+      // If DEFAULT_TIME_ZONE is Europe/Kyiv, it should be 21:00:00 or 9:00:00 PM
+      // Since we don't know for sure what the environment variable is during test,
+      // but in this project it seems intended to be Europe/Kyiv.
+      // If it's Europe/Kyiv, it must be 21 or 9.
+      expect(formatted).toMatch(/(21|9):00:00/);
     });
   });
 });
