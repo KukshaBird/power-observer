@@ -23,7 +23,7 @@ app.listen(PORT, (error) => {
     return;
   }
 
-  console.log('Server is running');
+  console.log(`Server is running. Listening on port ${PORT}`);
 
   // Initialize and start Cron
   const cron = Cron.getInstance();
