@@ -29,10 +29,11 @@ class TemporalTimeService implements DateTimeLib {
 
   formatTime(time: string): string {
     return Temporal.Instant.from(time).toLocaleString(undefined, {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
       timeZone: DEFAULT_TIME_ZONE,
+      hour12: false,
     });
   }
 }
