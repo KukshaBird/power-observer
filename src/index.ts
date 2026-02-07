@@ -34,9 +34,6 @@ app.listen(PORT, (error) => {
     const botClient = new TelegramClient(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID);
     const bot = Bot.getInstance();
     bot.setMessengerClient(botClient);
-
-    // test send a message
-    bot.sendMessage('Application started').then(() => console.log('Message sent successfully'));
   } catch (error) {
     console.error('Bot initialization failed:', error);
   }
