@@ -14,7 +14,7 @@ class CheckDeviceStatusJob implements CronJob {
   private timeService: DateTimeLib;
 
   constructor() {
-    this.bank = new Redis();
+    this.bank = Redis.getInstance();
     this.bot = Bot.getInstance();
     this.timeService = new TemporalTimeService();
   }

@@ -10,32 +10,44 @@ class Redis {
     DISCONNECTED: 'disconnected',
   };
 
-  private client: RedisClientType;
+  private static instance: Redis;
+  private readonly client: RedisClientType;
 
-  constructor() {
+  private constructor() {
     this.client = createClient({
       url: process.env.REDIS_URL || 'redis://localhost:6379',
     });
     this.client.on('error', (err) => console.log('Redis Client Error', err));
-    this.connect().then(() => {});
+    this.client.on('connect', () => console.log('Redis Client Connected'));
+  }
+
+  public static getInstance(): Redis {
+    if (!Redis.instance) {
+      Redis.instance = new Redis();
+    }
+    return Redis.instance;
   }
 
   private async connect() {
     if (!this.client.isOpen) {
       await this.client.connect();
     }
+    return this.client;
   }
 
   public async storeKey(key: string, value: string) {
-    await this.client.set(key, value);
+    const client = await this.connect();
+    await client.set(key, value);
   }
 
   public async getKey(key: string) {
-    return await this.client.get(key);
+    const client = await this.connect();
+    return await client.get(key);
   }
 
   public async removeKey(key: string) {
-    await this.client.del(key);
+    const client = await this.connect();
+    await client.del(key);
   }
 }
 

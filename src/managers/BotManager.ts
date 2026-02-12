@@ -3,12 +3,20 @@ import { DateTimeLib } from '../services/time/types';
 import TemporalTimeService from '../services/time/TemporalTimeService';
 
 class BotManager {
+  private static instance: BotManager;
   private bank: Redis;
   private timeService: DateTimeLib;
 
-  constructor() {
-    this.bank = new Redis();
+  private constructor() {
+    this.bank = Redis.getInstance();
     this.timeService = new TemporalTimeService();
+  }
+
+  public static getInstance(): BotManager {
+    if (!BotManager.instance) {
+      BotManager.instance = new BotManager();
+    }
+    return BotManager.instance;
   }
 
   public async handleHeartbeat() {
