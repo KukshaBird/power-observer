@@ -6,7 +6,7 @@ import MessageGenerator from '../../bot/generator/MessageGenerator';
 import Bot from '../../bot/Bot';
 
 class CheckDeviceStatusJob implements CronJob {
-  private static HEARTBEAT_LIMIT = 60000; // 1 minute
+  private static HEARTBEAT_LIMIT = 5 * 60000; // 5 minutes
   private messageGenerator = new MessageGenerator();
 
   private bank: Redis;
