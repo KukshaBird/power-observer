@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BUILD_TAG_NAME: ${{ env.REGISTRY }}/${{github.repository }}:latest
 
 jobs:
   build-and-push:
@@ -32,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.BUILD_TAG_NAME }}
+          tags: ${{ env.REGISTRY }}/${{ vars.IMAGE_TAG }}:latest
 
   deploy:
     needs: build-and-push
@@ -54,7 +53,7 @@ jobs:
             git pull origin main
 
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-            docker pull ${{ env.BUILD_TAG_NAME }}
+            docker pull ${{ env.REGISTRY }}/${{ vars.IMAGE_TAG }}:latest
             docker compose up -d
             docker system prune -f
           EOF
