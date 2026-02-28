@@ -7,8 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  BUILD_TAG_NAME: ${{ env.REGISTRY }}/${{ vars.IMAGE_TAG }}:latest
+  BUILD_TAG_NAME: ${{ env.REGISTRY }}/${{github.repository }}:latest
 
 jobs:
   build-and-push:
