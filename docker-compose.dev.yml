@@ -13,6 +13,8 @@ services:
       - db
       - redis
     restart: no
+    networks:
+      - default
 
   redis:
     image: redis:alpine
@@ -30,6 +32,12 @@ services:
       - ./database/.env
     volumes:
       - data:/var/lib/postgresql/data
+    networks:
+      - default
 
 volumes:
   data:
+
+networks:
+  default:
+    name: app-dev
