@@ -4,6 +4,8 @@ import { DateTimeLib } from '../../time/types';
 import TemporalTimeService from '../../time/TemporalTimeService';
 import MessageGenerator from '../../bot/generator/MessageGenerator';
 import Bot from '../../bot/Bot';
+import PowerManager from '../../../managers/PowerManager';
+import { DeviceStatus } from '../../../entities/PowerStatus.entity';
 
 class CheckDeviceStatusJob implements CronJob {
   private static HEARTBEAT_LIMIT = 5 * 60000; // 5 minutes
@@ -12,11 +14,13 @@ class CheckDeviceStatusJob implements CronJob {
   private bank: Redis;
   private bot: Bot;
   private timeService: DateTimeLib;
+  private powerManager: PowerManager;
 
   constructor() {
     this.bank = Redis.getInstance();
     this.bot = Bot.getInstance();
     this.timeService = new TemporalTimeService();
+    this.powerManager = new PowerManager();
   }
 
   public async start() {
@@ -37,6 +41,7 @@ class CheckDeviceStatusJob implements CronJob {
       const message = this.messageGenerator.disconnectMessage(this.timeService.formatTime(this.timeService.now()));
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.DISCONNECTED);
       await this.bank.storeKey(Redis.DISCONNECTED_AT_KEY, lastHeartbeat);
+      await this.powerManager.storeStatus(DeviceStatus.DISCONNECTED, lastHeartbeat);
       await this.bot.sendMessage(message);
       return;
     }
@@ -44,16 +49,15 @@ class CheckDeviceStatusJob implements CronJob {
     // CONNECTED
     if (!limitReached && !isConnected) {
       const disconnectedAt = await this.bank.getKey(Redis.DISCONNECTED_AT_KEY);
+      const now = this.timeService.now();
+      await this.powerManager.storeStatus(DeviceStatus.CONNECTED, now);
       let blackoutTimeStr: string | undefined;
       if (disconnectedAt) {
-        const diffDuration = this.timeService.subtract(this.timeService.now(), disconnectedAt);
+        const diffDuration = this.timeService.subtract(now, disconnectedAt);
         blackoutTimeStr = this.messageGenerator.blackoutString(diffDuration);
       }
 
-      const message = this.messageGenerator.connectMessage(
-        this.timeService.formatTime(this.timeService.now()),
-        blackoutTimeStr,
-      );
+      const message = this.messageGenerator.connectMessage(this.timeService.formatTime(now), blackoutTimeStr);
 
       await this.bank.storeKey(Redis.DEVICE_STATUS_KEY, Redis.DEVICE_STATUSES.CONNECTED);
       await this.bank.removeKey(Redis.DISCONNECTED_AT_KEY);

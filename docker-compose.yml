@@ -10,11 +10,34 @@ services:
     env_file:
       - .env
     depends_on:
+      - db
       - redis
     restart: always
+    networks:
+      - default
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
     restart: always
+
+  db:
+    container_name: db-prod
+    image: postgres:18.3-alpine
+    ports: ["5432:5432"]
+    restart: always
+    shm_size: 128mb
+    env_file:
+      - ./database/.env
+    volumes:
+      - data:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+  data:
+
+networks:
+  default:
+    name: app-prod

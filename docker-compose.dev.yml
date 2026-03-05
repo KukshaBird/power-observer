@@ -10,11 +10,34 @@ services:
     env_file:
       - .env
     depends_on:
+      - db
       - redis
     restart: no
+    networks:
+      - default
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
     restart: on-failure
+
+  db:
+    container_name: db-dev
+    image: postgres:18.3-alpine
+    ports: ["5432:5432"]
+    restart: on-failure
+    shm_size: 128mb
+    env_file:
+      - ./database/.env
+    volumes:
+      - data:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+  data:
+
+networks:
+  default:
+    name: app-dev
